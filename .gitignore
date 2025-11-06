@@ -11,3 +11,23 @@ venv/
 
 # Ignore system files
 .DS_Store
+# Ignore IDE/project files
+.idea/
+*.iml
+*.xml
+
+# Python build / cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual environments
+.venv/
+venv/
+
+# System files
+.DS_Store
+Thumbs.db
