@@ -1,25 +1,15 @@
 #Telling LLM how to generate D2 diagram code and rendering them to SVGs
-import os
-import re
-import subprocess
-import tempfile
-import textwrap
-from typing import Dict
-from llm_bridge import answer_with_llama
+import re, subprocess, tempfile, textwrap
+from llm_bridge import answer_with_llama  
 def extract_d2_block(response_text: str) -> str:
-    if not isinstance(response_text, str):
-        return ""
     match = re.search(r"```d2(.*?)```", response_text, re.DOTALL | re.IGNORECASE)
     if match:
         return match.group(1).strip()
     match2 = re.search(r"```(.*?)```", response_text, re.DOTALL)
-    if match2:
-        return match2.group(1).strip()
-    return response_text.strip()
+    return match2.group(1).strip() if match2 else response_text.strip()
 def render_d2_to_svg(d2_code: str) -> str:
-    if not d2_code or not d2_code.strip():
-        raise ValueError("Empty D2 code passed to render_d2_to_svg")
-    with tempfile.NamedTemporaryFile(suffix=".d2", delete=False, mode="w", encoding="utf-8") as f:
+    """Renders a D2 code string into an SVG file using the D2 CLI."""
+    with tempfile.NamedTemporaryFile(suffix=".d2", delete=False, mode="w") as f:
         f.write(d2_code)
         d2_path = f.name
     svg_path = d2_path.replace(".d2", ".svg")
@@ -27,72 +17,72 @@ def render_d2_to_svg(d2_code: str) -> str:
         subprocess.run(["d2", d2_path, svg_path], check=True)
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"D2 rendering failed: {e}")
-    finally:
-        if os.path.exists(d2_path):
-            os.unlink(d2_path)
     return svg_path
-def _normalize_d2(d2_code: str) -> str:
-    if not d2_code:
-        return ""
-    s = d2_code.strip()
-    s = re.sub(r"\s+(?=[A-Za-z_][\w.]*\s*:)", "\n", s)
-    s = re.sub(r"\s+(?=[A-Za-z_][\w.]*\s*->\s*)", "\n", s)
-    s = s.replace("{", "{\n")
-    s = s.replace("}", "\n}")
-    s = re.sub(r"\n{3,}", "\n", s)
-    return s.strip()
-def _remove_stray_trailing_braces(d2_code: str) -> str:
-    code = d2_code.strip()
-    while code.endswith("}"):
-        opens = code.count("{")
-        closes = code.count("}")
-        if closes > opens:
-            code = code.rstrip()[:-1].rstrip()
-        else:
-            break
-    return code
-def llm_generate_d2(context_text: str, user_query: str) -> Dict[str, str]:
+def llm_generate_d2(context_text: str, user_query: str) -> dict:
     prompt = textwrap.dedent(f"""
-Your task: Output valid D2 code that will be rendered into a diagram.
+        You are a specialized Large Language Model that acts as a **Diagram Context Interpreter and D2 Code Generator**
+        within a research-oriented Retrieval-Augmented Generation (RAG) system.
 
-Strict formatting rules you MUST follow:
-1) Node IDs must use underscores instead of spaces:
-   Example: Token_Search, Materials_Property_Matrix
-2) Every node must follow:
-   ID: "Readable Label"
-3) Every edge must follow:
-   ID1 -> ID2
-   or:
-   ID1 -> ID2: "Label"
-4) NO trailing text after quotes, EVER.
-5) NO prose, NO explanation, ONLY valid D2.
+        ### Background of the System
+        The RAG system you are part of works as follows:
+        1. A user asks a question about a research paper (for example: “Show me the architecture” or “Generate the data flow diagram”).
+        2. The system retrieves a set of **text chunks (CONTEXT)** from a **vector database** such as Pinecone.
+           These chunks are not the exact answer; they are *pieces of relevant text* extracted from the paper 
+           that together contain information needed to construct the answer.
+        3. Your role is to interpret these retrieved chunks, **infer what the final answer conceptually is**, 
+           and then represent that understanding visually in **valid D2 diagram code**.
+        4. The diagram you produce will then be rendered directly into an image by the D2 visualization engine.
 
-You must construct nodes and relationships ONLY from:
-- USER REQUEST intention
-- CONTEXT chunks (retrieved evidence)
+        ---
 
-Output MUST start immediately with D2 code. NO backticks.
+        ### Your Objective
+        Given:
+        - **USER REQUEST** → The original user query (which may ask for an architecture, data flow, schematic, or visualization).
+        - **CONTEXT** → The retrieved text chunks from the vector database (which together hold relevant information).
 
-USER REQUEST:
-{user_query}
+        You must:
+        1. **Understand the intent** of the user's request — what kind of visualization they expect (e.g., architecture, data flow, relationships).
+        2. **Read and analyze** the CONTEXT. Since these chunks are not the final answer, you must think like a researcher:
+           - Mentally combine these pieces of information.
+           - Infer the key components, their roles, and how they connect logically.
+           - Essentially, imagine what the answer would look like if written out in words.
+        3. Once you understand that conceptual answer, **translate it into valid D2 code** that visually represents the relationships, structure, or flow described.
 
-CONTEXT:
-{context_text}
+        ---
 
-Now output valid D2 below:
-""")
-    raw_response = answer_with_llama(
-        "",
-        prompt,
-        model="llama-3.3-70b-versatile",
-    )
-    # print("user_query:", user_query)
-    # print("context_text:", context_text)
-    # print("raw_response:", raw_response)
-    d2_raw = extract_d2_block(raw_response)
-    d2_norm = _normalize_d2(d2_raw)
-    d2_clean = _remove_stray_trailing_braces(d2_norm)
-    return {
-        "raw_response": raw_response,
-        "d2_code": d2_clean,
+        ### Important Guidelines
+        - Identify **entities** (modules, layers, algorithms, datasets, processes, or components) and their **relationships** (data flow, dependencies, inputs/outputs, communications).
+        - Represent entities as **nodes** and their interactions as **directed arrows (->)**.
+        - Use clear, descriptive node labels (e.g., “Input Layer”, “Feature Extractor”, “Decoder”).
+        - Add arrow labels when needed to show what flows between nodes (e.g., “embeddings”, “data stream”).
+        - Maintain logical readability: keep left-to-right or top-down flow consistent.
+        - Avoid inventing new technical details — stay faithful to the given CONTEXT.
+        - Think carefully about how the *inferred answer* should look, and design the diagram to reflect that idea.
+        - Output must be a well-structured D2 diagram — no prose, no explanations.
+
+        ---
+
+        ### Output Format
+        Return **only** valid D2 code enclosed in triple backticks. (Do not include any boilerplate or disclaimers. 
+Do not start with phrases like "As an AI model", "Sure", or "Here is".
+Begin directly with the answer.)
+        Do not add commentary or markdown outside the code block.
+
+        Example output format:
+        ```d2
+        Input -> Encoder: extracts features
+        Encoder -> Decoder: reconstructs data
+        Decoder -> Output: produces result
+        ```
+
+        USER REQUEST:
+        {user_query}
+
+        CONTEXT:
+        {context_text}
+    """)
+    raw_response = answer_with_llama("", prompt, model="llama-3.1-8b-instant")
+    d2_code = extract_d2_block(raw_response)
+    return { "raw_response": raw_response,
+        "d2_code": d2_code
     }
