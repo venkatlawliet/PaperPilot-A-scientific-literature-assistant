@@ -24,7 +24,7 @@ from hybrid_partition_ingest import (
     build_llm_context,
     build_bm25_from_chunks,
 )
-st.set_page_config(page_title="ResearchMCP-TThe new", page_icon="🪐", layout="wide")
+st.set_page_config(page_title="ResearchMCP-The new", page_icon="🪐", layout="wide")
 st.markdown(
     """
 <style>
