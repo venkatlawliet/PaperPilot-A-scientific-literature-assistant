@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
     libgl1 \
-    && curl -fsSL https://d2lang.com/install.sh | sh -s -- v0.7.1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir \
