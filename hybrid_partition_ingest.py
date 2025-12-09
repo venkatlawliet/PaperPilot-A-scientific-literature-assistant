@@ -128,12 +128,10 @@ def extract_parts_from_url(pdf_url: str) -> List[Part]:
         logger.error(f"ADE extraction failed: {e}")
         raise
 def extract_parts_from_file(file_bytes: bytes) -> List[Part]:
-    """Extract parts from uploaded PDF file bytes using LandingAI ADE."""
     try:
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
             tmp.write(file_bytes)
             tmp_path = tmp.name
-        
         retries = 3
         response = None
         for attempt in range(retries):
@@ -145,15 +143,11 @@ def extract_parts_from_file(file_bytes: bytes) -> List[Part]:
                     raise
                 logger.warning(f"Retrying ADE ({attempt+1}/{retries}): {e}")
                 time.sleep(5)
-        
         os.unlink(tmp_path)
-        
         ade_json = json.loads(response.model_dump_json())
         content_list = ade_json.get("chunks") or ade_json.get("content") or []
-        
         if not content_list:
             raise ValueError("ADE returned 0 chunks (PDF may be scanned or invalid).")
-        
         parts = []
         for item in content_list:
             text = item.get("markdown") or item.get("text", "")
@@ -168,15 +162,11 @@ def extract_parts_from_file(file_bytes: bytes) -> List[Part]:
                     extra=item.get("grounding", {}),
                 )
             )
-        
         logger.info(f"ADE extracted {len(parts)} chunks from uploaded file.")
         return parts
-    
     except Exception as e:
         logger.error(f"ADE extraction from file failed: {e}")
         raise
-
-
 def ingest_paper_from_file(
     file_bytes: bytes,
     user_id: str,
@@ -184,28 +174,20 @@ def ingest_paper_from_file(
     paper_id: int,
     paper_title: str,
 ) -> Dict[str, Any]:
-    """Ingest a paper from uploaded file bytes."""
     index = get_or_create_index()
-    
     parts = extract_parts_from_file(file_bytes)
     parts = [p for p in parts if p.text.strip()]
-    
     if not parts:
         raise RuntimeError("ADE could not extract any text from the uploaded PDF.")
-    
     texts = [p.text for p in parts]
     vecs = text_model.encode(texts, batch_size=32, show_progress_bar=True)
     metas = create_meta(parts, user_id, paper_id, paper_title)
     ids = [f"{paper_id}-{uuid.uuid4()}" for _ in range(len(vecs))]
-    
     save_paper_chunks(user_id, paper_id, metas)
-    
     docs = [Document(page_content=p.text, metadata={"page": p.page}) for p in parts]
     bm25, sparse_vectors = sparse_fit_and_encode(docs)
-    
     state = bm25_to_state(texts)
     save_bm25_state(user_id, paper_id, state)
-    
     hybrid_vectors = []
     for i in range(len(vecs)):
         s = sparse_vectors[i]
@@ -219,11 +201,8 @@ def ingest_paper_from_file(
             "sparse_values": s,
             "metadata": metas[i],
         })
-    
     index.upsert(vectors=hybrid_vectors, namespace=namespace)
-    
     logger.info(f"Ingested uploaded '{paper_title}' — {len(hybrid_vectors)} vectors.")
-    
     return {"parts": parts, "bm25": bm25, "num_vectors": len(hybrid_vectors)}
 def create_meta(parts: List[Part], user_id: str, paper_id: int, paper_title: str):
     out = []
