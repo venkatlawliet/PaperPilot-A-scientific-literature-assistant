@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
-# CRITICAL: Install PyTorch CPU-only FIRST (200MB instead of 2GB)
 RUN pip install --no-cache-dir \
     torch==2.2.0+cpu \
     --index-url https://download.pytorch.org/whl/cpu
