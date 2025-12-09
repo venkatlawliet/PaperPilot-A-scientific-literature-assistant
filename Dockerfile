@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
+# Install D2 for diagram generation
+RUN curl -fsSL https://d2lang.com/install.sh | sh -s --
+
 RUN pip install --no-cache-dir \
     torch==2.2.0+cpu \
     --index-url https://download.pytorch.org/whl/cpu
