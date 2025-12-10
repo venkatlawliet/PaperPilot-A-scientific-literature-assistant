@@ -2,6 +2,7 @@ bcrypt==4.3.0
 groq==0.30.0
 langchain==0.3.27
 landingai-ade==0.18.3
+numpy<2.0
 pinecone==3.2.2
 pinecone-text==0.11.0
 python-dotenv==1.1.1
@@ -10,4 +11,3 @@ sentence-transformers==4.1.0
 streamlit==1.47.1
 supabase==2.24.0
 transformers==4.56.2
-numpy
