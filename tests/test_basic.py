@@ -1,9 +1,6 @@
-# ============================================================
 # tests/test_basic.py
-# ============================================================
 # Basic tests for ResearchQuesta
 # Run with: pytest tests/ -v
-# ============================================================
 
 import pytest
 import os
@@ -191,8 +188,4 @@ A -> B
             assert "A -> B" in d2_code
         except ImportError as e:
             pytest.skip(f"Dependencies not installed: {e}")
-
-
-# ============================================================
 # Run tests with: pytest tests/ -v
-# ============================================================
