@@ -1,14 +1,10 @@
-# ============================================================
-# GitHub Actions CI/CD Pipeline for ResearchQuesta
-# ============================================================
-# This workflow runs on every push and pull request to main
-# 
+# GitHub Actions CI/CD Pipeline
+#workflow runs on every push and pull request to main
 # What it does:
 # 1. Lints your Python code (catches errors before runtime)
 # 2. Runs tests (when you add them)
 # 3. Builds Docker image (verifies Dockerfile works)
 # 4. Pushes to Docker Hub (only on main branch)
-# ============================================================
 
 name: CI/CD Pipeline
 
@@ -25,9 +21,7 @@ env:
   PYTHON_VERSION: "3.11"
 
 jobs:
-  # ========================================
   # JOB 1: Code Quality & Linting
-  # ========================================
   lint:
     name: Code Quality
     runs-on: ubuntu-latest
@@ -63,9 +57,7 @@ jobs:
           # Warn on other issues
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
 
-  # ========================================
   # JOB 2: Run Tests
-  # ========================================
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -94,9 +86,8 @@ jobs:
           pytest tests/ -v --tb=short || echo "No tests found yet - add tests to /tests directory"
         continue-on-error: true
 
-  # ========================================
   # JOB 3: Build Docker Image
-  # ========================================
+  
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -118,9 +109,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ========================================
-  # JOB 4: Push to Docker Hub (main branch only)
-  # ========================================
+  # JOB 4: Push to Docker Hub (main branch only) Master in my case
   push:
     name: Push to Docker Hub
     runs-on: ubuntu-latest
