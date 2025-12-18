@@ -1,10 +1,9 @@
-# GitHub Actions CI/CD Pipeline
 #workflow runs on every push and pull request to main
 # What it does:
-# 1. Lints your Python code (catches errors before runtime)
-# 2. Runs tests (when you add them)
-# 3. Builds Docker image (verifies Dockerfile works)
-# 4. Pushes to Docker Hub (only on main branch)
+# 1. Lints your Python code 
+# 2. Runs tests 
+# 3. Builds Docker image
+# 4. Pushes to Docker Hub
 
 name: CI/CD Pipeline
 
@@ -15,7 +14,7 @@ on:
   pull_request:
     branches: [master]
 
-# Environment variables
+# Env vars
 env:
   DOCKER_IMAGE: prabhasadapa06/researchquesta-mcp-rag
   PYTHON_VERSION: "3.11"
