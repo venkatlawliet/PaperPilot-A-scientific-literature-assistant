@@ -1,0 +1,189 @@
+PaperPilot Attribution License (PAL)
+Version 1.0, January 2025
+
+Copyright (c) 2025 Venkat
+
+==============================================================================
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+1. Definitions
+
+   "License" shall mean the terms and conditions for use, reproduction, and 
+   distribution as defined in this document.
+
+   "Licensor" shall mean Venkat, the copyright owner.
+
+   "Legal Entity" shall mean the union of the acting entity and all other 
+   entities that control, are controlled by, or are under common control 
+   with that entity.
+
+   "You" (or "Your") shall mean an individual or Legal Entity exercising 
+   permissions granted by this License.
+
+   "Software" shall mean the PaperPilot codebase and associated documentation 
+   files made available under this License.
+
+   "Derivative Works" shall mean any work that is based on (or derived from) 
+   the Software.
+
+2. Grant of License
+
+   Subject to the terms of this License, Licensor hereby grants You a 
+   perpetual, worldwide, non-exclusive, royalty-free license to:
+
+   (a) Use, reproduce, and modify the Software for personal, academic, 
+       research, or internal business purposes;
+   
+   (b) Distribute copies of the Software or Derivative Works;
+   
+   (c) Publicly display and perform the Software or Derivative Works;
+   
+   (d) Sublicense the Software, provided that all sublicenses include 
+       proper attribution as specified in Section 3.
+
+3. Attribution Requirements
+
+   You must give appropriate credit to Venkat as the original author by:
+
+   (a) Retaining all copyright notices in the source code;
+   
+   (b) Including the following attribution in any documentation, user 
+       interface, or promotional materials:
+       
+       "Powered by PaperPilot, created by Venkat"
+       "Original work: https://github.com/venkatlawliet/PaperPilot-A-scientific-literature-assistant"
+   
+   (c) Providing a prominent link to the original repository;
+   
+   (d) Indicating if modifications were made to the original Software.
+
+4. Notification Requirement
+
+   Upon deployment or integration of the Software into any production system, 
+   You must notify the Licensor within 30 days by sending an email to:
+   
+   Email: venkatoffice6o6@gmail.com
+   
+   The notification should include:
+   - Organization/Individual name
+   - Project name and brief description
+   - Deployment environment (production/staging/development)
+   - Public URL (if applicable)
+
+5. Commercial Use
+
+   (a) Commercial use of the Software is permitted provided that:
+       i.   Attribution requirements (Section 3) are met in full;
+       ii.  Notification requirements (Section 4) are completed;
+       iii. The Software itself is not sold as a standalone product.
+   
+   (b) You may charge for services built using the Software, provided 
+       that the underlying Software remains freely accessible with 
+       appropriate attribution.
+   
+   (c) For commercial licensing without attribution requirements or 
+       to sell the Software as a standalone product, contact the Licensor 
+       for a separate commercial license agreement.
+
+6. Sublicensing
+
+   You may sublicense the Software to third parties provided that:
+   
+   (a) All sublicenses include this License in its entirety;
+   
+   (b) All sublicensees comply with attribution requirements (Section 3);
+   
+   (c) You do not grant rights that exceed those granted to You under 
+       this License;
+   
+   (d) The original copyright notice and attribution to Venkat is preserved.
+
+7. Distribution and Redistribution
+
+   When distributing the Software or Derivative Works, You must:
+   
+   (a) Include a copy of this License;
+   
+   (b) Provide clear attribution to the original author;
+   
+   (c) Indicate any modifications made to the original Software;
+   
+   (d) Not imply endorsement by the Licensor without explicit permission.
+
+8. Prohibited Actions
+
+   You may not:
+   
+   (a) Remove or alter any copyright, patent, trademark, or attribution 
+       notices from the Software;
+   
+   (b) Use the Licensor's name, trademarks, or service marks without 
+       prior written permission, except as required for attribution;
+   
+   (c) Distribute the Software in a manner that violates applicable laws 
+       or regulations;
+   
+   (d) Claim ownership of the original Software.
+
+9. Disclaimer of Warranty
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. THE LICENSOR MAKES 
+   NO WARRANTIES REGARDING THE SOFTWARE'S PERFORMANCE, RELIABILITY, OR 
+   SUITABILITY FOR ANY PARTICULAR PURPOSE.
+
+10. Limitation of Liability
+
+    IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER 
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING 
+    FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+    DEALINGS IN THE SOFTWARE.
+    
+    THIS LIMITATION APPLIES TO ALL DAMAGES OF ANY KIND, INCLUDING WITHOUT 
+    LIMITATION DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES.
+
+11. Termination
+
+    (a) This License is effective until terminated.
+    
+    (b) Your rights under this License will terminate automatically without 
+        notice if You fail to comply with any of its terms.
+    
+    (c) Upon termination:
+        i.   You must cease all use of the Software;
+        ii.  You must delete all copies in Your possession or control;
+        iii. Sections 9, 10, and 12 shall survive termination.
+
+12. General Provisions
+
+    (a) This License constitutes the entire agreement between You and the 
+        Licensor regarding the Software.
+    
+    (b) If any provision of this License is held to be unenforceable, such 
+        provision shall be reformed to the minimum extent necessary.
+    
+    (c) No waiver of any term shall be deemed a further or continuing waiver.
+    
+    (d) This License shall be governed by and construed in accordance with 
+        applicable international copyright law.
+
+13. Contact and Permissions
+
+    For inquiries regarding commercial licensing, permissions beyond the 
+    scope of this License, or general questions:
+    
+    Licensor: Venkat
+    GitHub: @venkatlawliet
+    Email: venkatoffice6o6@gmail.com
+    Repository: https://github.com/venkatlawliet/PaperPilot-A-scientific-literature-assistant
+
+==============================================================================
+
+ACCEPTANCE
+
+By using, copying, modifying, or distributing the Software, You indicate 
+Your acceptance of this License and all its terms and conditions.
+
+==============================================================================
