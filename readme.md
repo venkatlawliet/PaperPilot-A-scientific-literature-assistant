@@ -184,6 +184,42 @@ graph TB
 
 ---
 
+## 🛡️ Reliability & Failure Handling
+
+Building a RAG system that talks to 7 external APIs taught me where things break. Here's how I handled it:
+
+### Timeout Budgets on Everything
+Every external call has a hard timeout: Claude (20s), SerpAPI (10s), Unpaywall (20s). 
+
+**Why?** One hung API call used to freeze the entire conversation. Now if Claude's API is slow, the system times out and returns an error instead of leaving users staring at a loading spinner forever. No thread exhaustion, no cascading failures.
+
+### 5-Strategy Fallback Chain for Finding PDFs
+Academic publishing is a mess — there's no single API that has all papers. So I built a fallback pipeline:
+
+1. Try Semantic Scholar's `openAccessPdf`
+2. Try their `paperLinks` (grep for "pdf")
+3. Extract ArXiv ID → construct `arxiv.org/pdf/{id}.pdf`
+4. Got a DOI? Hit Unpaywall's `best_oa_location`
+5. Still nothing? Try all Unpaywall `oa_locations`
+
+Each step fails independently. If Unpaywall is down, ArXiv still works. **This maximizes paper availability**
+
+### Fail-Closed Ingestion (Don't Guess)
+When the PDF URL is uncertain, the system returns `None` instead of guessing.
+
+**Why this matters in RAG:** Bad URL → corrupted PDF → garbage embeddings → hallucinated answers. system rather tells the user "couldn't find the PDF" than contaminate the vector database with junk that ruins future retrievals.
+
+### LLM Cost Guardrails via Prompts
+Agentic systems can burn money fast. Without guardrails, Claude might call `research_lookup` every time someone mentions the word "paper" in conversation.
+
+I constrained this with explicit tool descriptions and prompt engineering:
+
+Plus system prompt reinforcement. This cut unnecessary Semantic Scholar searches (and downstream PDF downloads + embedding generation).
+
+**Design principle:** Fail fast on config errors (missing API keys caught at startup). Fail safe on runtime errors (return empty list, not exception). Isolate failures (one broken API doesn't kill the whole system).
+
+---
+
 ## ⚡ Key Features
 
 ### 1. Intelligent Query Routing
