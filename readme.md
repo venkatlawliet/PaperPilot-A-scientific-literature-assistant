@@ -339,66 +339,32 @@ I initially explored knowledge graph-based approaches to improve grounding accur
 
 ### Multi-Tenant Isolation Strategy
 
-```python
-# Each user gets unique namespace
-def _safe_namespace(username: str) -> str:
-    safe = username.lower().strip().replace(" ", "_")
-    safe = "".join(c for c in safe if (c.isalnum() or c == "_"))
-    return f"user_{safe}"
+The system enforces strict per-user data isolation using namespace-based partitioning in Pinecone.
 
-# Example:
-# username: "Alice Smith" → namespace: "user_alice_smith"
-# username: "bob@research" → namespace: "user_bobresearch"
+- Each user is assigned a deterministic, sanitized namespace (e.g. user_alice_smith)
 
-# All Pinecone queries filtered by namespace + paper_id
-index.query(
-    vector=dense_query,
-    sparse_vector=sparse_query,
-    namespace=user.namespace,
-    filter={"paper_id": {"$eq": float(paper_id)}}
-)
-```
+- All queries are scoped by both:
 
-**Benefits**:
-- Complete data isolation between users
-- Each user can have multiple papers
-- No cross-contamination in search results
-- Scalable to millions of users
+    - namespace (user-level isolation)
+
+    - paper_id (document-level filtering)
+
+This ensures:
+
+Complete isolation between users
+
+Support for multiple papers per user
+
+No cross-contamination in search results
+
+Horizontal scalability to large user bases
 
 ### Hybrid Search Implementation
 
-```python
-def query_ade_index(
-    query: str,
-    bm25: BM25Encoder,
-    dense_model,
-    namespace: str,
-    paper_id: int,
-    top_k: int = 5,
-    alpha: float = 0.6,  # Weight for dense vs sparse
-):
-    # Dense vector (semantic)
-    q_dense = dense_model.encode([query])[0].tolist()
-    
-    # Sparse vector (keyword)
-    q_sparse = bm25.encode_queries([query])[0]
-    
-    # Alpha weighting: 0.6 dense + 0.4 sparse
-    weighted_sparse = {
-        "indices": q_sparse["indices"],
-        "values": [v * (1 - alpha) for v in q_sparse["values"]]
-    }
-    weighted_dense = [v * alpha for v in q_dense]
-    
-    # Pinecone hybrid query
-    return index.query(
-        vector=weighted_dense,
-        sparse_vector=weighted_sparse,
-        top_k=top_k,
-        namespace=namespace,
-        filter={"paper_id": {"$eq": float(paper_id)}}
-    )
-```
+Implements weighted hybrid retrieval combining dense semantic embeddings and BM25 keyword search using Pinecone.
+- Uses dense + sparse vectors for improved relevance
+- Filters results by namespace and paper_id
+- Tunable weighting via alpha (default: 0.6)
 
 **Why Alpha = 0.6?**
 - Empirically tested on validation set
@@ -510,60 +476,7 @@ UNPAYWALL_EMAIL=you@example.com  # For open access papers
 
 1. Create Supabase project at [supabase.com](https://supabase.com/)
 
-2. Run the following SQL to create tables:
-
-```sql
--- Users table
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    username TEXT UNIQUE NOT NULL,
-    hashed_password TEXT NOT NULL,
-    namespace TEXT UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Papers table
-CREATE TABLE papers (
-    id SERIAL PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    pdf_url TEXT NOT NULL,
-    bm25_state JSONB,
-    status TEXT DEFAULT 'ingested',
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Paper chunks table (for BM25 refitting)
-CREATE TABLE paper_chunks (
-    id SERIAL PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    paper_id INTEGER REFERENCES papers(id) ON DELETE CASCADE,
-    page INTEGER,
-    type TEXT,
-    caption TEXT,
-    text TEXT NOT NULL,
-    grounding INTEGER,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Chat history table
-CREATE TABLE paper_chats (
-    id SERIAL PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    paper_id INTEGER REFERENCES papers(id) ON DELETE CASCADE,
-    question TEXT NOT NULL,
-    answer TEXT NOT NULL,
-    d2_code TEXT,
-    svg_path TEXT,
-    source_type TEXT DEFAULT 'paper',
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Indexes for performance
-CREATE INDEX idx_papers_user_id ON papers(user_id);
-CREATE INDEX idx_chunks_paper_id ON paper_chunks(paper_id);
-CREATE INDEX idx_chats_paper_id ON paper_chats(paper_id);
-```
+2. Run the SQL in schema.sql to create tables in supabase:
 
 3. Create Pinecone index:
    - Dimension: 768
@@ -813,15 +726,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Inspiration
 
 This project was born out of a real need during my work as a research assistant. The frustration of spending 10+ minutes per question led to building a system that now answers in under 2 seconds while maintaining 83% accuracy. I might have spent months building this project but i learnt a lot of things during my journey. 
-
-### Research Papers
-
-Key papers that influenced this work:
-- *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks* (Lewis et al., 2020)
-- *Dense Passage Retrieval for Open-Domain Question Answering* (Karpukhin et al., 2020)
-- *BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models* (Thakur et al., 2021)
-- *Precise Zero-Shot Dense Retrieval without Relevance Labels* (Gao et al., 2022)
-
 ---
 
 ## 📧 Contact
@@ -832,13 +736,6 @@ Key papers that influenced this work:
 
 ---
 
-## ⭐ Star History
-
-If you find this project useful, please consider giving it a star:) ⭐
-
-[![Star History Chart](https://api.star-history.com/svg?repos=venkatlawliet/PaperPilot-A-scientific-literature-assistant&type=Date)](https://star-history.com/#venkatlawliet/PaperPilot-A-scientific-literature-assistant&Date)
-
----
 
 <div align="center">
   <sub>Built with ❤️ by researchers, for researchers</sub>
