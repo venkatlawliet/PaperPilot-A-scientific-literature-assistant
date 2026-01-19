@@ -760,8 +760,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **UI Framework**: [Streamlit](https://streamlit.io/)
 
 ## Inspiration
-
+<sub>
 This project was born out of a real need during my work as a research assistant. The frustration of spending 10+ minutes per question led to building a system that now answers in under 2 seconds while maintaining 83% accuracy. I might have spent months building this project but i learnt a lot of things during my journey. 
+</sub>
 ---
 
 ## 📧 Contact
