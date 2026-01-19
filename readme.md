@@ -761,7 +761,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 ## Inspiration
 
-This project was born out of a real need during my work as a research assistant. The frustration of spending 10+ minutes per question led to building a system that now answers in under 2 seconds while maintaining 83% accuracy. I might have spent months building this project but i learnt a lot of things during my journey. 
+This project was born out of a real need during my work as a researcher. The frustration of spending 10+ minutes per question led to building a system that now answers in under 2 seconds while maintaining 83% accuracy. I might have spent months building this project but i learnt a lot of things during my journey. 
 
 ---
 
@@ -775,5 +775,5 @@ This project was born out of a real need during my work as a research assistant.
 
 
 <div align="center">
-  <sub>Built with ❤️ by researchers, for researchers</sub>
+  <sub>Built with ❤️ by a research engineer, for researchers</sub>
 </div>
